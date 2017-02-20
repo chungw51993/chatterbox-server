@@ -38,19 +38,27 @@ var requestHandler = function(request, response) {
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
-
+  var statusCode = 404;
   // The outgoing status.
-  if (request.method === 'GET') {
-    var statusCode = 200;
-  } else if (request.method === 'POST') {
-    var statusCode = 201;
-    request.on('data', function(datum) {
-      var postData = '';
-      postData += datum;
-      postData = JSON.parse(postData);
-      output.results.push(postData);
-    })
+  if (request.url === '/classes/messages') {
+    if (request.method === 'GET') {
+      statusCode = 200;
+    } else if (request.method === 'POST') {
+      statusCode = 201;
+      request.on('data', function(datum) {
+        var postData = '';
+        postData += datum;
+        postData = JSON.parse(postData);
+        output.results.push(postData);
+      });
 
+    } else if (request.method === 'OPTIONS'){
+      statusCode = 200;
+      response.end(JSON.stringify({
+        "Allow": ["GET", "POST"]
+      }))
+    }
+    
   }
 
   // See the note below about CORS headers.
