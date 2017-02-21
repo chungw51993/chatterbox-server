@@ -20,7 +20,8 @@ var defaultCorsHeaders = {
 
 var output = {
   results: [{
-    "test": "test value"
+    "username": "Jin",
+    "text": "hello"
   }]
 };
 
@@ -62,7 +63,7 @@ var requestHandler = function(request, response) {
       headers["access-control-allow-methods"] = "POST, GET, OPTIONS";
       headers["access-control-allow-credentials"] = false;
       headers["access-control-max-age"] = '86400'; // 24 hours
-      headers["access-control-allow-headers"] = "x-parse-application-id, x-parse-rest-api-key, x-parse-session-token, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+      headers["access-control-allow-headers"] = "x-parse-application-id, x-parse-rest-api-key, Content-Type, Accept";
     } 
   }
 
@@ -77,7 +78,6 @@ var requestHandler = function(request, response) {
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
-  console.log('headers------------------>',headers);
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
