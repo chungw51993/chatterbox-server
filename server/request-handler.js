@@ -11,6 +11,16 @@ this file and include it in basic-server.js so that it actually works.
 *Hint* Check out the node module documentation at http://nodejs.org/api/modules.html.
 
 **************************************************************/
+function createDate (){
+
+  var date = new Date();
+  var min = date.getMinutes() * 60;
+  var sec = date.getSeconds(); //January is 0!
+  var hr = date.getHours()* 60 * 60; //January is 0!
+
+  return date = hr + min + sec
+
+}
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, POST, OPTIONS',
@@ -22,7 +32,8 @@ var output = {
   results: [{
     'username': 'Jono',
     'text': 'Do my bidding!',
-    'objectId': Math.random() * 10000
+    'objectId': Math.random() * 10000,
+    'createdAt': createDate()
   }]
 };
 
@@ -44,7 +55,10 @@ var requestHandler = function(request, response) {
   var headers = defaultCorsHeaders;
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var statusCode = 404;
-  // The outgoing status.
+  // The outgoing status
+  if(request.url.split("?")[1] !== undefined){
+    var orderType = request.url.split("?")[1].split("=")[1];
+  }
   if (request.url.split("?")[0] === '/classes/messages') {
     if (request.method === 'GET') {
       statusCode = 200;
@@ -72,6 +86,20 @@ var requestHandler = function(request, response) {
     } 
   }
 
+  function compare(a,b) {
+    if (a.createdAt < b.createdAt)
+      return 1;
+    if (a.createdAt > b.createdAt)
+      return -1;
+    return 0;
+  }
+
+  //sort by last created
+  if(orderType === '-createdAt'){
+    console.log("------------------> here")
+    output.results = output.results.sort(compare);
+  }
+
   //i surpisingly had to make my own parser function. i gota be missing something
   var parser = function(string) {
     //input: username=Jin&text=hello&roomname=lobby
@@ -83,10 +111,13 @@ var requestHandler = function(request, response) {
     prettyObj[username[0]] = username[1].split("+").join(" ");
     prettyObj[text[0]] = text[1].split("+").join(" ");
     prettyObj['objectId'] = Math.random() * 10000;
+    prettyObj['createdAt'] = createDate();
 
-    return prettyObj
+console.log("prettyobj",prettyObj);
+    return prettyObj;
 
   }
+  
 
   // See the note below about CORS headers.
 

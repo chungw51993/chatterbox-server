@@ -26,7 +26,7 @@ var app = {
     app.$roomSelect.on('change', app.handleRoomChange);
 
     // Fetch previous messages
-    app.startSpinner();
+    //app.startSpinner();
     app.fetch(false);
 
     // Poll for new messages
@@ -36,7 +36,7 @@ var app = {
   },
 
   send: function(message) {
-    app.startSpinner();
+    //app.startSpinner();
 
     // POST the message to the server
     $.ajax({
@@ -70,10 +70,13 @@ var app = {
         app.messages = data.results;
 
         // Get the last message
-        var mostRecentMessage = data.results[data.results.length - 1];
-
+        console.log(data.results);
+        var mostRecentMessage = data.results[0];
+console.log("mostRecentMessage.objectId", mostRecentMessage.objectId)
+console.log("app.lastMessageId", app.lastMessageId)
         // Only bother updating the DOM if we have a new message
         if (mostRecentMessage.objectId !== app.lastMessageId) {
+          console.log("2")
           // Update the UI with the fetched rooms
           app.renderRoomList(data.results);
 
@@ -203,7 +206,7 @@ var app = {
         app.$roomSelect.val(roomname);
       }
     } else {
-      app.startSpinner();
+      //app.startSpinner();
       // Store as undefined for empty names
       app.roomname = app.$roomSelect.val();
     }
