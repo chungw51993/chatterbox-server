@@ -73,5 +73,29 @@ describe('server', function() {
     });
   });
 
+  xit('Should return the most recent message on top', function(done) {
+     var requestParams = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Jono',
+        message: 'Hello!'}
+    };
+     var requestParams2 = {method: 'POST',
+      uri: 'http://127.0.0.1:3000/classes/messages',
+      json: {
+        username: 'Fred',
+        message: 'I did your bidding!'}
+    };
+
+    request(requestParams, function(error, response, body) {
+      request(requestParams2, function(error, response, body) {
+        request('http://127.0.0.1:3000/classes/messages?order=-createdAt', function(error, response, body) {
+          var messages = JSON.parse(body).results;
+          console.log(messages);
+        }); 
+      });
+    });
+  })
+
 
 });
