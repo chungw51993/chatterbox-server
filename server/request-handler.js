@@ -13,13 +13,15 @@ this file and include it in basic-server.js so that it actually works.
 **************************************************************/
 var defaultCorsHeaders = {
   'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-methods': 'GET, POST, OPTIONS',
   'access-control-allow-headers': 'content-type, accept',
   'access-control-max-age': 10 // Seconds.
 };
 
 var output = {
-  results: []
+  results: [{
+    "test": "test value"
+  }]
 };
 
 var requestHandler = function(request, response) {
@@ -37,6 +39,7 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
+  var headers = defaultCorsHeaders;
   console.log('Serving request type ' + request.method + ' for url ' + request.url);
   var statusCode = 404;
   // The outgoing status.
@@ -54,15 +57,16 @@ var requestHandler = function(request, response) {
 
     } else if (request.method === 'OPTIONS'){
       statusCode = 200;
-      response.end(JSON.stringify({
-        "Allow": ["GET", "POST"]
-      }))
-    }
-    
+
+      headers["access-control-allow-origin"] = "*";
+      headers["access-control-allow-methods"] = "POST, GET, OPTIONS";
+      headers["access-control-allow-credentials"] = false;
+      headers["access-control-max-age"] = '86400'; // 24 hours
+      headers["access-control-allow-headers"] = "x-parse-application-id, x-parse-rest-api-key, x-parse-session-token, X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept";
+    } 
   }
 
   // See the note below about CORS headers.
-  var headers = defaultCorsHeaders;
 
   // Tell the client we are sending them plain text.
   //
@@ -73,6 +77,7 @@ var requestHandler = function(request, response) {
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
   response.writeHead(statusCode, headers);
+  console.log('headers------------------>',headers);
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
   // response.end() will be the body of the response - i.e. what shows
